@@ -122,63 +122,155 @@ def _inject_mobile_nav():
     """スマホ幅（≤768px）でサイドバーを開閉するハンバーガー/背景/JSを注入する。
 
     st.markdown ではスクリプトが実行されないため components.html（iframe）から
-    親ドキュメント（window.parent.document）を操作する。開閉は body の
-    .mlc-sb-open クラスで制御し、CSS メディアクエリ側で見た目を切り替える。
-    PC 幅ではハンバーガー/背景は CSS で非表示になり、挙動は変わらない。
+    親ドキュメント（window.parent.document）を操作する。
+
+    対象要素（実際のクラス名）:
+      - サイドバー本体 : section[data-testid="stSidebar"]（＝独自ナビの入れ物）
+      - トグルボタン   : .mlc-mobile-hamburger（自前で生成、id=mlc-mobile-hamburger）
+      - オーバーレイ   : .mlc-sb-backdrop（自前で生成、id=mlc-sb-backdrop）
+      - 開状態フラグ   : body.mlc-sb-open（CSS メディアクエリで見た目を切替）
+
+    Streamlit は再描画で DOM を作り直すため、DOMContentLoaded だけに頼らず
+    MutationObserver で「対象要素が生成された後」に毎回イベントを保証し、
+    dataset フラグでイベントの二重登録を防ぐ。ネイティブの折りたたみ
+    コントロール（左上の「≫」）はバージョン差でCSSだけでは消せないことが
+    あるため JS でも確実に隠す。PC 幅では CSS 側で全て無効化される。
     """
     components.html(
         """
         <script>
         (function () {
-          const doc = window.parent.document;
-          const body = doc.body;
+          const win = window.parent;
+          const doc = win.document;
+          if (!doc || !doc.body) return;
+
           const HAM_ID = "mlc-mobile-hamburger";
-          const BD_ID = "mlc-sb-backdrop";
-          const OPEN = "mlc-sb-open";
+          const BD_ID  = "mlc-sb-backdrop";
+          const OPEN   = "mlc-sb-open";
+          const SB_SEL = 'section[data-testid="stSidebar"]';
 
-          const close = () => body.classList.remove(OPEN);
-          const toggle = () => body.classList.toggle(OPEN);
+          const sidebarEl = () => doc.querySelector(SB_SEL);
+          const isOpen = () => doc.body.classList.contains(OPEN);
 
-          // ハンバーガー / 背景を（無ければ）一度だけ作る
-          if (!doc.getElementById(HAM_ID)) {
-            const btn = doc.createElement("button");
-            btn.id = HAM_ID;
-            btn.className = "mlc-mobile-hamburger";
-            btn.setAttribute("aria-label", "メニューを開く");
-            btn.type = "button";
-            btn.textContent = "\\u2630";  // ☰
-            btn.addEventListener("click", function (e) {
-              e.stopPropagation();
-              toggle();
+          function syncAria(state) {
+            const btn = doc.getElementById(HAM_ID);
+            if (btn) btn.setAttribute("aria-expanded", state ? "true" : "false");
+          }
+          function open()   { doc.body.classList.add(OPEN);    syncAria(true);  }
+          function close()  { doc.body.classList.remove(OPEN); syncAria(false); }
+          function toggle() { isOpen() ? close() : open(); }
+
+          // --- トグルボタン（無ければ生成、消えたら再生成、二重登録は防ぐ） ---
+          function ensureHamburger() {
+            let btn = doc.getElementById(HAM_ID);
+            if (!btn) {
+              btn = doc.createElement("button");
+              btn.id = HAM_ID;
+              btn.className = "mlc-mobile-hamburger";
+              btn.type = "button";
+              btn.setAttribute("aria-label", "メニュー");
+              btn.setAttribute("aria-expanded", isOpen() ? "true" : "false");
+              btn.textContent = "\\u2630";  // ☰
+              doc.body.appendChild(btn);
+            } else if (btn.parentNode !== doc.body) {
+              doc.body.appendChild(btn);   // 別要素配下に移されていたら戻す
+            }
+            if (!btn.dataset.mlcBound) {   // イベント二重登録防止
+              btn.dataset.mlcBound = "1";
+              btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                toggle();
+              });
+            }
+          }
+
+          // --- オーバーレイ（サイドバー外タップで閉じる用） ---
+          function ensureBackdrop() {
+            let bd = doc.getElementById(BD_ID);
+            if (!bd) {
+              bd = doc.createElement("div");
+              bd.id = BD_ID;
+              bd.className = "mlc-sb-backdrop";
+              doc.body.appendChild(bd);
+            } else if (bd.parentNode !== doc.body) {
+              doc.body.appendChild(bd);
+            }
+            if (!bd.dataset.mlcBound) {
+              bd.dataset.mlcBound = "1";
+              bd.addEventListener("click", function (e) {
+                e.stopPropagation();
+                close();
+              });
+            }
+          }
+
+          // --- Streamlit ネイティブの折りたたみ「≫」を確実に隠す ---
+          function hideNativeControls() {
+            const sels = [
+              '[data-testid="stSidebarCollapseButton"]',
+              '[data-testid="stSidebarCollapsedControl"]',
+              '[data-testid="collapsedControl"]',
+            ];
+            sels.forEach(function (s) {
+              doc.querySelectorAll(s).forEach(function (el) {
+                el.style.display = "none";
+              });
             });
-            body.appendChild(btn);
-          }
-          if (!doc.getElementById(BD_ID)) {
-            const bd = doc.createElement("div");
-            bd.id = BD_ID;
-            bd.className = "mlc-sb-backdrop";
-            bd.addEventListener("click", close);
-            body.appendChild(bd);
           }
 
-          // 閉じる系のクリック処理は親ドキュメントに一度だけ委譲登録する
-          if (!window.parent.__mlcMobileNavBound) {
-            window.parent.__mlcMobileNavBound = true;
+          function ensureAll() {
+            ensureHamburger();
+            ensureBackdrop();
+            hideNativeControls();
+          }
+
+          // --- 閉じる系の委譲処理は親 window に一度だけ登録 ---
+          if (!win.__mlcMobileNavBound) {
+            win.__mlcMobileNavBound = true;
+
+            // 外タップ / メニュー項目タップで閉じる（capture で先取り）
             doc.addEventListener("click", function (e) {
-              if (!body.classList.contains(OPEN)) return;
+              if (!isOpen()) return;
               const ham = doc.getElementById(HAM_ID);
-              if (ham && ham.contains(e.target)) return;   // トグルは専用ハンドラ
-              const sb = doc.querySelector('section[data-testid="stSidebar"]');
+              if (ham && ham.contains(e.target)) return;  // トグルは専用ハンドラ
+              const sb = sidebarEl();
               if (sb && sb.contains(e.target)) {
-                // メニュー項目（リンク/ボタン）を押したら少し待って閉じる
-                if (e.target.closest('a, .nav-link, button, [role="link"]')) {
-                  setTimeout(close, 200);
+                // メニュー項目（リンク/ボタン等）を押したら少し待って閉じる
+                if (e.target.closest(
+                      'a, button, .nav-link, [role="link"], [role="option"], label')) {
+                  setTimeout(close, 180);
                 }
-                return;   // サイドバー内のその他は閉じない
+                return;  // サイドバー内のその他は閉じない
               }
-              // サイドバー外をタップ → 閉じる
-              close();
+              close();   // サイドバー外タップ → 閉じる
             }, true);
+
+            // Esc で閉じる
+            doc.addEventListener("keydown", function (e) {
+              if (e.key === "Escape" && isOpen()) close();
+            });
+
+            // PC 幅に戻ったら開状態をリセット
+            win.addEventListener("resize", function () {
+              if (win.innerWidth > 768) close();
+            });
+          }
+
+          // 初期化 + 再描画のたびに要素とイベントを保証（rAF でデバウンス）
+          ensureAll();
+          if (!win.__mlcMobileNavObserver) {
+            let scheduled = false;
+            const obs = new MutationObserver(function () {
+              if (scheduled) return;
+              scheduled = true;
+              win.requestAnimationFrame(function () {
+                scheduled = false;
+                ensureAll();
+              });
+            });
+            obs.observe(doc.body, { childList: true, subtree: true });
+            win.__mlcMobileNavObserver = obs;
           }
         })();
         </script>

@@ -44,9 +44,12 @@ span[data-testid="stIconMaterial"],
                "Material Icons" !important;
 }
 
-/* サイドバー上部の開閉ボタンは非表示にし、ロゴだけを見せる */
+/* サイドバー上部の開閉ボタンは非表示にし、ロゴだけを見せる。
+   Streamlit のバージョンで testid が異なるため複数指定して確実に隠す
+   （左上の「≫」ネイティブ展開コントロールも含む）。 */
 [data-testid="stSidebarCollapseButton"],
-[data-testid="stSidebarCollapsedControl"] { display: none !important; }
+[data-testid="stSidebarCollapsedControl"],
+[data-testid="collapsedControl"] { display: none !important; }
 
 .stApp {
   background: var(--mlc-surface);
