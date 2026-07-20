@@ -1,0 +1,734 @@
+/* =========================================================
+   My Life Compass — global styles
+   世界観: 安心 / 前向き / 余白 / 伴走 / 信頼 / 希望
+   白基調・薄いアイボリー背景・落ち着いた青・優しい緑・控えめオレンジ
+   大きな角丸カード / 薄い境界線 / 非常に弱い影 / 十分な余白
+   ========================================================= */
+
+:root {
+  --mlc-base:        #ffffff;
+  --mlc-surface:     #f7f5ef;   /* 薄いアイボリー */
+  --mlc-surface-2:   #f1f0ea;
+  --mlc-main:        #5b7db1;   /* 落ち着いた青 */
+  --mlc-main-soft:   #eaf0f8;
+  --mlc-sub:         #86a894;   /* 優しい緑 */
+  --mlc-sub-soft:    #ecf3ee;
+  --mlc-accent:      #d99b63;   /* 控えめオレンジ */
+  --mlc-accent-soft: #faf1e6;
+  --mlc-ink:         #3a3f45;   /* 本文 */
+  --mlc-ink-soft:    #6b7078;   /* 補足 */
+  --mlc-line:        #e9e6dd;   /* 薄い境界線 */
+  --mlc-shadow:      0 2px 10px rgba(60, 63, 70, 0.04);
+  --mlc-radius:      22px;
+}
+
+/* ---- Google Fonts (日本語) ---- */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
+/* ---- ベース ---- */
+html, body, [class*="css"], .stApp, .stMarkdown, p, span, div, label, input, textarea {
+  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic",
+               "Meiryo", sans-serif !important;
+}
+
+/* Material Symbols アイコンだけは日本語フォントを上書きしない。
+   （上の !important を戻さないと "keyboard_double_arrow" 等のリガチャ文字が
+     そのまま表示されてしまう） */
+[data-testid="stIconMaterial"],
+span[data-testid="stIconMaterial"],
+.material-symbols-rounded,
+.material-symbols-outlined,
+.material-icons,
+[class*="material-symbols"] {
+  font-family: "Material Symbols Rounded", "Material Symbols Outlined",
+               "Material Icons" !important;
+}
+
+/* サイドバー上部の開閉ボタンは非表示にし、ロゴだけを見せる */
+[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCollapsedControl"] { display: none !important; }
+
+.stApp {
+  background: var(--mlc-surface);
+  color: var(--mlc-ink);
+}
+
+/* メインコンテンツの余白を広めに、行間ゆったり */
+.block-container {
+  padding-top: 2.2rem;
+  padding-bottom: 4rem;
+  max-width: 1120px;
+}
+p { line-height: 1.9; color: var(--mlc-ink); }
+
+/* Streamlit 標準ヘッダーを控えめに */
+header[data-testid="stHeader"] { background: transparent; }
+#MainMenu, footer { visibility: hidden; }
+
+/* =========================================================
+   サイドバー（ブランドナビ）
+   ========================================================= */
+section[data-testid="stSidebar"] {
+  background: var(--mlc-base);
+  border-right: 1px solid var(--mlc-line);
+}
+section[data-testid="stSidebar"] .block-container { padding-top: 1.4rem; }
+
+.mlc-brand {
+  padding: 4px 6px 14px 6px;
+  border-bottom: 1px solid var(--mlc-line);
+  margin-bottom: 14px;
+}
+.mlc-brand .mlc-logo {
+  font-size: 1.28rem;
+  font-weight: 700;
+  color: var(--mlc-main);
+  letter-spacing: .01em;
+}
+.mlc-brand .mlc-tagline {
+  font-size: .78rem;
+  color: var(--mlc-ink-soft);
+  margin-top: 4px;
+}
+.mlc-sidebar-note {
+  margin-top: 18px;
+  padding: 14px 16px;
+  background: var(--mlc-sub-soft);
+  border-radius: 16px;
+  font-size: .78rem;
+  color: #4f6a5a;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   ページヘッダー（上部：タイトル・説明・ユーザー）
+   ========================================================= */
+.mlc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 2px 20px 2px;
+  border-bottom: 1px solid var(--mlc-line);
+  margin-bottom: 26px;
+}
+.mlc-header .mlc-title { font-size: 1.7rem; font-weight: 700; color: var(--mlc-ink); margin: 0; }
+.mlc-header .mlc-subtitle { font-size: .95rem; color: var(--mlc-ink-soft); margin-top: 6px; }
+.mlc-avatar {
+  width: 44px; height: 44px; flex: 0 0 44px;
+  border-radius: 50%;
+  background: var(--mlc-main-soft);
+  color: var(--mlc-main);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 1rem;
+  border: 1px solid var(--mlc-line);
+}
+
+/* =========================================================
+   カード
+   ========================================================= */
+.mlc-card {
+  background: var(--mlc-base);
+  border: 1px solid var(--mlc-line);
+  border-radius: var(--mlc-radius);
+  box-shadow: var(--mlc-shadow);
+  padding: 24px 26px;
+  margin-bottom: 18px;
+}
+.mlc-card .mlc-card-label {
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--mlc-main);
+  letter-spacing: .03em;
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 7px;
+}
+.mlc-card .mlc-card-title { font-size: 1.12rem; font-weight: 700; margin: 0 0 8px 0; }
+.mlc-card .mlc-card-body { font-size: .95rem; color: var(--mlc-ink); line-height: 1.85; }
+.mlc-card ul { margin: 6px 0 0 0; padding-left: 1.1rem; }
+.mlc-card li { margin-bottom: 6px; line-height: 1.8; }
+
+/* 色バリエーション（左に細いアクセント） */
+.mlc-card.tone-main   { border-left: 4px solid var(--mlc-main); }
+.mlc-card.tone-sub    { border-left: 4px solid var(--mlc-sub); }
+.mlc-card.tone-accent { border-left: 4px solid var(--mlc-accent); }
+
+/* 大きめのヒーローカード（今日の一歩など） */
+.mlc-hero {
+  background: linear-gradient(135deg, #ffffff 0%, var(--mlc-sub-soft) 100%);
+  border: 1px solid var(--mlc-line);
+  border-radius: var(--mlc-radius);
+  box-shadow: var(--mlc-shadow);
+  padding: 30px 32px;
+  margin-bottom: 22px;
+}
+.mlc-hero .mlc-hero-label { font-size: .82rem; font-weight: 700; color: var(--mlc-sub); margin-bottom: 10px; }
+.mlc-hero .mlc-hero-text  { font-size: 1.28rem; font-weight: 700; line-height: 1.7; color: var(--mlc-ink); }
+.mlc-hero .mlc-hero-sub   { font-size: .92rem; color: var(--mlc-ink-soft); margin-top: 10px; }
+
+/* =========================================================
+   AI 提案カード（静かに現れる小さな存在）
+   ========================================================= */
+.mlc-ai {
+  background: var(--mlc-main-soft);
+  border: 1px solid #dce6f3;
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.mlc-ai .mlc-ai-icon {
+  width: 34px; height: 34px; flex: 0 0 34px;
+  border-radius: 50%;
+  background: var(--mlc-main);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+}
+.mlc-ai .mlc-ai-kind { font-size: .74rem; font-weight: 700; color: var(--mlc-main); margin-bottom: 3px; letter-spacing: .03em; }
+.mlc-ai .mlc-ai-text { font-size: .93rem; color: #40506a; line-height: 1.8; }
+
+/* =========================================================
+   タイムライン（Route）— 柔らかい縦タイムライン
+   ========================================================= */
+.mlc-timeline { position: relative; margin: 4px 0 0 6px; padding-left: 26px; }
+.mlc-timeline::before {
+  content: ""; position: absolute; left: 7px; top: 6px; bottom: 6px;
+  width: 2px; background: var(--mlc-line);
+}
+.mlc-tl-item { position: relative; margin-bottom: 20px; }
+.mlc-tl-item::before {
+  content: ""; position: absolute; left: -25px; top: 4px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #fff; border: 3px solid var(--mlc-main);
+}
+.mlc-tl-item.sub::before   { border-color: var(--mlc-sub); }
+.mlc-tl-item.near::before  { border-color: var(--mlc-accent); }
+.mlc-tl-when { font-size: .82rem; font-weight: 700; color: var(--mlc-main); }
+.mlc-tl-item.sub  .mlc-tl-when { color: var(--mlc-sub); }
+.mlc-tl-item.near .mlc-tl-when { color: var(--mlc-accent); }
+.mlc-tl-what { font-size: 1rem; font-weight: 600; margin-top: 2px; color: var(--mlc-ink); }
+.mlc-tl-meta { font-size: .84rem; color: var(--mlc-ink-soft); margin-top: 5px; }
+
+/* =========================================================
+   小物
+   ========================================================= */
+.mlc-chip {
+  display: inline-block;
+  background: var(--mlc-surface-2);
+  border: 1px solid var(--mlc-line);
+  color: var(--mlc-ink-soft);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: .8rem;
+  margin: 0 6px 6px 0;
+}
+.mlc-chip.sub    { background: var(--mlc-sub-soft);    color: #4f6a5a; border-color: #dce8e0; }
+.mlc-chip.accent { background: var(--mlc-accent-soft); color: #a9713b; border-color: #efe0cd; }
+
+.mlc-status {
+  display: flex; gap: 10px; align-items: center;
+  padding: 14px 16px; border-radius: 16px;
+  background: var(--mlc-base); border: 1px solid var(--mlc-line);
+  margin-bottom: 12px;
+}
+.mlc-status .dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 10px; }
+.mlc-status .dot.main { background: var(--mlc-main); }
+.mlc-status .dot.sub  { background: var(--mlc-sub); }
+.mlc-status .dot.acc  { background: var(--mlc-accent); }
+.mlc-status .name { font-weight: 700; font-size: .92rem; }
+.mlc-status .where { font-size: .84rem; color: var(--mlc-ink-soft); margin-left: auto; text-align: right; }
+
+.mlc-section-label {
+  font-size: 1.02rem; font-weight: 700; color: var(--mlc-ink);
+  margin: 8px 0 12px 2px;
+}
+.mlc-soft-note { font-size: .86rem; color: var(--mlc-ink-soft); margin: 2px 2px 16px 2px; }
+
+/* Journey の柔らかいチェック行（Todoに見せない） */
+.mlc-step {
+  background: var(--mlc-base);
+  border: 1px solid var(--mlc-line);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  display: flex; gap: 12px; align-items: center;
+}
+.mlc-step .mark {
+  width: 22px; height: 22px; flex: 0 0 22px; border-radius: 50%;
+  border: 2px solid var(--mlc-sub); background: var(--mlc-sub-soft);
+}
+.mlc-step .txt { font-size: 1rem; color: var(--mlc-ink); }
+
+/* Streamlit 標準の checkbox を少し柔らかく */
+.stCheckbox { padding: 4px 0; }
+
+/* サブ / キャンセルボタン（白背景・薄い境界線）。通常ボタンとフォーム送信ボタン
+   （secondaryFormSubmit）を同じ見た目にそろえる。 */
+.stButton > button,
+.stFormSubmitButton > button {
+  border-radius: 14px;
+  border: 1px solid var(--mlc-line);
+  background: var(--mlc-base);
+  color: var(--mlc-main);
+  font-weight: 600;
+  min-height: 44px;
+  padding: 8px 18px;
+  box-shadow: none;
+}
+.stButton > button:hover,
+.stFormSubmitButton > button:hover {
+  border-color: var(--mlc-main);
+  color: var(--mlc-main);
+  background: var(--mlc-main-soft);
+}
+.stButton > button,
+.stFormSubmitButton > button {
+  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+/* 主要CTA — 少し明るい青・白文字・hoverで少し濃く。押したくなる柔らかいデザイン。
+   通常ボタン（type="primary"）とフォーム送信ボタン（primaryFormSubmit）を
+   まったく同じ見た目に統一する（背景色・文字色・高さ・角丸・余白・hover）。
+   これまでフォーム送信ボタンにこのスタイルが当たらず「Routeを作る」などが
+   見えづらくなっていたのを修正する。 */
+.stButton > button[kind="primary"],
+.stFormSubmitButton > button[kind="primaryFormSubmit"] {
+  background: #7ba3d6;
+  border: 1px solid #7ba3d6;
+  color: #ffffff !important;
+  font-weight: 700;
+  min-height: 44px;
+  border-radius: 14px;
+  padding: 8px 18px;
+  box-shadow: 0 2px 8px rgba(91, 125, 177, 0.20);
+}
+.stButton > button[kind="primary"] *,
+.stFormSubmitButton > button[kind="primaryFormSubmit"] * { color: #ffffff !important; }
+.stButton > button[kind="primary"]:hover,
+.stFormSubmitButton > button[kind="primaryFormSubmit"]:hover {
+  background: #5b7db1;
+  border-color: #5b7db1;
+  color: #ffffff !important;
+  box-shadow: 0 3px 12px rgba(91, 125, 177, 0.30);
+}
+.stButton > button[kind="primary"]:active,
+.stFormSubmitButton > button[kind="primaryFormSubmit"]:active {
+  background: #4d6c9e; border-color: #4d6c9e;
+}
+/* disabled 時は落ち着いたグレーで、押せないことがやさしく伝わるように */
+.stButton > button[kind="primary"]:disabled,
+.stButton > button[kind="primary"][disabled],
+.stFormSubmitButton > button[kind="primaryFormSubmit"]:disabled {
+  background: #c7d2e0 !important;
+  border-color: #c7d2e0 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+  opacity: 1;
+}
+
+/* =========================================================
+   ページ先頭の大きめリード文
+   ========================================================= */
+.mlc-page-lead {
+  font-size: 1.32rem;
+  font-weight: 700;
+  color: var(--mlc-ink);
+  margin: 2px 0 6px 2px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   右側チャットパネル（Compass / Route 共通）
+   マーカー .mlc-chat-marker を含むカラムをパネル化する（:has）
+   ========================================================= */
+.mlc-chat-marker { height: 0; margin: 0; padding: 0; overflow: hidden; }
+
+/* パネルを開いている間は、メインを右に寄せてパネルの下に隠れないようにする */
+.stApp:has(.mlc-chat-marker) [data-testid="stMain"] .block-container {
+  max-width: none;
+  padding-right: calc(min(34vw, 440px) + 30px);
+}
+
+/* 右側固定パネル（VS Code / Copilot Chat のような常設サイドパネル） */
+div[data-testid="stColumn"]:has(.mlc-chat-marker),
+div[data-testid="column"]:has(.mlc-chat-marker) {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: min(34vw, 440px);
+  min-width: 336px;
+  height: 100vh;
+  background: var(--mlc-base);
+  border-left: 1px solid var(--mlc-line);
+  box-shadow: -12px 0 30px rgba(60, 63, 70, 0.08);
+  padding: 0 20px 22px 22px;
+  overflow-y: auto;              /* チャットだけ独立スクロール */
+  z-index: 1000;
+  animation: mlcSlideIn 0.3s ease both;
+}
+
+@keyframes mlcSlideIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ヘッダーはパネル上部に固定 */
+.mlc-chat-head {
+  position: sticky; top: 0; z-index: 3;
+  background: var(--mlc-base);
+  margin: 0 -20px 12px -22px;
+  padding: 18px 20px 12px 22px;
+  border-bottom: 1px solid var(--mlc-line);
+}
+
+/* モバイル幅では画面下から開く全幅パネルにする */
+@media (max-width: 900px) {
+  .stApp:has(.mlc-chat-marker) [data-testid="stMain"] .block-container {
+    padding-right: 0;
+  }
+  div[data-testid="stColumn"]:has(.mlc-chat-marker),
+  div[data-testid="column"]:has(.mlc-chat-marker) {
+    top: auto; bottom: 0; left: 0; right: 0;
+    width: 100%; min-width: 0; height: 82vh;
+    border-left: none; border-top: 1px solid var(--mlc-line);
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -12px 30px rgba(60, 63, 70, 0.12);
+  }
+}
+.mlc-chat-title { font-size: 1.02rem; font-weight: 700; color: var(--mlc-main); }
+.mlc-chat-sub   { font-size: .8rem; color: var(--mlc-ink-soft); margin-top: 5px; line-height: 1.7; }
+
+.mlc-chat-qnum { font-size: .72rem; font-weight: 700; color: var(--mlc-sub); margin: 8px 0 4px; letter-spacing: .04em; }
+.mlc-chat-q    { font-size: .98rem; font-weight: 700; color: var(--mlc-ink); line-height: 1.7; margin-bottom: 6px; }
+.mlc-chat-help { font-size: .8rem; color: var(--mlc-ink-soft); margin-bottom: 8px; }
+
+.mlc-chat-hist {
+  background: var(--mlc-surface);
+  border: 1px solid var(--mlc-line);
+  border-radius: 12px;
+  padding: 9px 12px;
+  margin-bottom: 8px;
+}
+.mlc-chat-hist .q { font-size: .74rem; color: var(--mlc-ink-soft); }
+.mlc-chat-hist .a { font-size: .9rem; color: var(--mlc-ink); font-weight: 600; margin-top: 2px; }
+
+.mlc-chat-foot { border-top: 1px solid var(--mlc-line); margin: 12px 0 10px; }
+
+/* チャット内のボタンは少しコンパクトに */
+div[data-testid="stColumn"]:has(.mlc-chat-marker) .stButton > button,
+div[data-testid="column"]:has(.mlc-chat-marker) .stButton > button {
+  padding: 7px 12px;
+  font-size: .88rem;
+}
+
+/* =========================================================
+   Compassカード / 候補カード
+   ========================================================= */
+.mlc-cc-label {
+  font-size: .74rem; font-weight: 700; color: var(--mlc-main);
+  letter-spacing: .03em; margin-bottom: 6px;
+}
+.mlc-cc-title { font-size: 1.1rem; font-weight: 700; color: var(--mlc-ink); line-height: 1.6; margin-bottom: 6px; }
+.mlc-cc-desc  { font-size: .9rem; color: var(--mlc-ink-soft); line-height: 1.8; margin-bottom: 10px; }
+.mlc-cc-row   { display: flex; gap: 10px; font-size: .84rem; margin-bottom: 5px; }
+.mlc-cc-row .k { flex: 0 0 84px; color: var(--mlc-ink-soft); font-weight: 700; }
+.mlc-cc-row .v { color: var(--mlc-ink); }
+.mlc-cc-tags  { margin-top: 10px; }
+.mlc-cc-route {
+  margin-top: 12px; font-size: .8rem; color: var(--mlc-ink-soft);
+  border-top: 1px dashed var(--mlc-line); padding-top: 10px;
+}
+.mlc-cc-route.done { color: var(--mlc-sub); font-weight: 700; }
+
+.mlc-candidate { background: linear-gradient(135deg, #ffffff 0%, var(--mlc-main-soft) 100%); }
+.mlc-cc-progress {
+  margin-top: 12px; font-size: .82rem; color: #40506a;
+  background: var(--mlc-base); border: 1px solid #dce6f3;
+  border-radius: 10px; padding: 8px 11px;
+}
+
+.mlc-chosen { }
+
+/* =========================================================
+   Route タイムライン（アコーディオン型）
+   ========================================================= */
+.mlc-route-tl { position: relative; margin-left: 4px; padding-left: 22px; }
+.mlc-route-tl::before {
+  content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px;
+  width: 2px; background: var(--mlc-line);
+}
+.mlc-rt-item { position: relative; margin: 4px 0 2px; }
+.mlc-rt-item::before {
+  content: ""; position: absolute; left: -22px; top: 4px;
+  width: 13px; height: 13px; border-radius: 50%;
+  background: #fff; border: 3px solid var(--mlc-main);
+}
+.mlc-rt-item.sub::before  { border-color: var(--mlc-sub); }
+.mlc-rt-item.near::before { border-color: var(--mlc-accent); }
+.mlc-rt-when  { font-size: .82rem; font-weight: 700; color: var(--mlc-main); }
+.mlc-rt-item.sub  .mlc-rt-when { color: var(--mlc-sub); }
+.mlc-rt-item.near .mlc-rt-when { color: var(--mlc-accent); }
+.mlc-rt-state { font-size: 1rem; font-weight: 700; color: var(--mlc-ink); margin-top: 2px; line-height: 1.6; }
+.mlc-rt-ach { margin: 6px 0 0 0; padding-left: 1.1rem; }
+.mlc-rt-ach li { font-size: .86rem; color: var(--mlc-ink-soft); margin-bottom: 3px; }
+.mlc-rt-row { display: flex; gap: 10px; font-size: .84rem; margin-bottom: 5px; }
+.mlc-rt-row .k { flex: 0 0 96px; color: var(--mlc-ink-soft); font-weight: 700; }
+.mlc-rt-row .v { color: var(--mlc-ink); }
+.mlc-rt-sugg {
+  margin: 8px 0 12px; font-size: .86rem; color: #40506a;
+  background: var(--mlc-main-soft); border: 1px solid #dce6f3;
+  border-radius: 12px; padding: 10px 12px;
+}
+
+/* =========================================================
+   Journey の今日の一歩（Todoに見せない）
+   ========================================================= */
+.mlc-js-step {
+  background: var(--mlc-base);
+  border: 1px solid var(--mlc-line);
+  border-left: 4px solid var(--mlc-sub);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 8px;
+}
+.mlc-js-step.done   { border-left-color: var(--mlc-sub); background: var(--mlc-sub-soft); }
+.mlc-js-step.partial{ border-left-color: var(--mlc-accent); background: var(--mlc-accent-soft); }
+.mlc-js-step.skip   { border-left-color: var(--mlc-line); opacity: .7; }
+.mlc-js-text { font-size: 1.02rem; font-weight: 600; color: var(--mlc-ink); line-height: 1.6; }
+.mlc-js-meta { margin-top: 6px; display: flex; gap: 10px; align-items: center; }
+.mlc-js-from { font-size: .76rem; color: var(--mlc-ink-soft); }
+.mlc-js-badge {
+  font-size: .74rem; font-weight: 700; border-radius: 999px;
+  padding: 2px 10px; background: var(--mlc-sub-soft); color: #4f6a5a;
+}
+.mlc-js-badge.partial { background: var(--mlc-accent-soft); color: #a9713b; }
+.mlc-js-badge.skip    { background: var(--mlc-surface-2); color: var(--mlc-ink-soft); }
+
+/* =========================================================
+   Compassカード（一覧はシンプルに）
+   ========================================================= */
+.mlc-compass-card { margin-bottom: 10px; }
+.mlc-cc-period {
+  margin-top: 10px; font-size: .82rem; color: var(--mlc-ink-soft);
+  border-top: 1px dashed var(--mlc-line); padding-top: 10px;
+}
+/* 「⋯」メニュー内のテキスト */
+.mlc-pop-label { font-size: .74rem; font-weight: 700; color: var(--mlc-main); margin-bottom: 4px; }
+.mlc-pop-text  { font-size: .9rem; color: var(--mlc-ink); line-height: 1.7; margin-bottom: 10px; }
+
+/* 編集入力のラベル */
+.mlc-edit-label { font-size: .8rem; font-weight: 700; color: var(--mlc-ink-soft); margin: 4px 0 4px; }
+
+/* =========================================================
+   Route の Compass 選択カード（プルダウンの代わり）
+   マーカー .mlc-pick-marker を含むカラムのボタンをカード化
+   ========================================================= */
+.mlc-pick-marker { height: 0; margin: 0; overflow: hidden; }
+div[data-testid="stColumn"]:has(.mlc-pick-marker) .stButton > button {
+  text-align: left;
+  justify-content: flex-start;
+  white-space: normal;
+  height: auto;
+  min-height: 62px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  line-height: 1.5;
+}
+.mlc-pick-tags { font-size: .76rem; color: var(--mlc-ink-soft); margin: 4px 2px 4px; }
+
+/* =========================================================
+   Dashboard のクリックできるナビカード
+   マーカー .mlc-navcard-marker を含むカラムのボタンをカード化
+   ========================================================= */
+.mlc-navcard-marker { height: 0; margin: 0; overflow: hidden; }
+div[data-testid="stColumn"]:has(.mlc-navcard-marker) .stButton > button {
+  display: block;
+  text-align: left;
+  white-space: normal;
+  height: 100%;
+  min-height: 128px;
+  padding: 20px 22px;
+  border-radius: var(--mlc-radius);
+  border: 1px solid var(--mlc-line);
+  border-left: 4px solid var(--mlc-main);
+  background: var(--mlc-base);
+  color: var(--mlc-ink);
+  box-shadow: var(--mlc-shadow);
+  font-weight: 500;
+}
+div[data-testid="stColumn"]:has(.mlc-navcard-marker.sub) .stButton > button    { border-left-color: var(--mlc-sub); }
+div[data-testid="stColumn"]:has(.mlc-navcard-marker.accent) .stButton > button { border-left-color: var(--mlc-accent); }
+div[data-testid="stColumn"]:has(.mlc-navcard-marker) .stButton > button:hover {
+  background: var(--mlc-surface);
+  color: var(--mlc-ink);
+  box-shadow: 0 4px 16px rgba(60, 63, 70, 0.08);
+}
+/* ナビカード内の段落（種別・タイトル・説明の階層） */
+div[data-testid="stColumn"]:has(.mlc-navcard-marker) .stButton > button p { margin: 0 0 6px 0; line-height: 1.6; }
+div[data-testid="stColumn"]:has(.mlc-navcard-marker) .stButton > button p:first-child {
+  font-size: .74rem; font-weight: 700; color: var(--mlc-main); letter-spacing: .02em;
+}
+div[data-testid="stColumn"]:has(.mlc-navcard-marker.sub) .stButton > button p:first-child    { color: var(--mlc-sub); }
+div[data-testid="stColumn"]:has(.mlc-navcard-marker.accent) .stButton > button p:first-child { color: var(--mlc-accent); }
+div[data-testid="stColumn"]:has(.mlc-navcard-marker) .stButton > button p:nth-child(2) {
+  font-size: 1.05rem; color: var(--mlc-ink);
+}
+div[data-testid="stColumn"]:has(.mlc-navcard-marker) .stButton > button p:last-child {
+  font-size: .84rem; color: var(--mlc-ink-soft); margin-bottom: 0;
+}
+
+/* =========================================================
+   開閉できるサイドバー（VS Code / Cursor 風）
+   閉じた状態は .mlc-sb-collapsed マーカーで判定し、幅を細くする
+   ========================================================= */
+.mlc-sb-collapsed { height: 0; margin: 0; overflow: hidden; }
+
+/* 閉じた状態：サイドバーを細くして、アイコン中心のコンパクト表示にする */
+section[data-testid="stSidebar"]:has(.mlc-sb-collapsed) {
+  min-width: 88px !important;
+  max-width: 88px !important;
+  width: 88px !important;
+}
+section[data-testid="stSidebar"]:has(.mlc-sb-collapsed) [data-testid="stSidebarContent"] {
+  min-width: 88px !important;
+  width: 88px !important;
+}
+section[data-testid="stSidebar"]:has(.mlc-sb-collapsed) .block-container {
+  padding-left: .5rem !important;
+  padding-right: .5rem !important;
+}
+section[data-testid="stSidebar"]:has(.mlc-sb-collapsed) [data-testid="stSidebarResizeHandle"] {
+  display: none !important;
+}
+
+/* ブランド（閉じたときは小さくロゴだけ） */
+.mlc-brand-mini {
+  text-align: center;
+  font-size: 1.5rem;
+  padding: 4px 0 12px 0;
+  border-bottom: 1px solid var(--mlc-line);
+  margin-bottom: 12px;
+}
+
+/* 閉じた状態のアイコンボタン（縦並び・正方形・中央寄せ） */
+.mlc-sb-icon-marker { height: 0; margin: 0; overflow: hidden; }
+section[data-testid="stSidebar"]:has(.mlc-sb-collapsed) .stButton > button {
+  padding: 8px 0;
+  min-height: 46px;
+  font-size: 1.28rem;
+  border-radius: 14px;
+  justify-content: center;
+}
+
+/* =========================================================
+   Dashboard：今日の一歩（一覧・最大3件）
+   ========================================================= */
+.mlc-today-lead { font-size: 1.06rem; font-weight: 700; color: var(--mlc-ink); margin: 4px 0 10px 2px; }
+
+/* 今日の一歩：一歩テキストのクリックできる行（押すと Journey へ） */
+.mlc-today-marker { height: 0; margin: 0; overflow: hidden; }
+div[data-testid="stColumn"]:has(.mlc-today-marker) .stButton > button {
+  display: block;
+  text-align: left;
+  white-space: normal;
+  height: 100%;
+  min-height: 62px;
+  padding: 15px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--mlc-line);
+  border-left: 4px solid var(--mlc-sub);
+  background: var(--mlc-base);
+  color: var(--mlc-ink);
+  box-shadow: var(--mlc-shadow);
+  font-weight: 600;
+  font-size: 1.0rem;
+  line-height: 1.6;
+}
+div[data-testid="stColumn"]:has(.mlc-today-marker) .stButton > button:hover {
+  background: var(--mlc-sub-soft);
+  color: var(--mlc-ink);
+  border-left-color: var(--mlc-sub);
+  box-shadow: 0 4px 16px rgba(60, 63, 70, 0.08);
+}
+
+/* Compass名タグ（今日の一歩の「→」の先）。リンク風・控えめに。 */
+.mlc-fromtag-marker { height: 0; margin: 0; overflow: hidden; }
+div[data-testid="stColumn"]:has(.mlc-fromtag-marker) .stButton > button {
+  text-align: left;
+  justify-content: flex-start;
+  white-space: normal;
+  min-height: 62px;
+  height: 100%;
+  padding: 15px 14px;
+  border-radius: 16px;
+  border: 1px dashed var(--mlc-line);
+  background: transparent;
+  color: var(--mlc-main);
+  font-weight: 600;
+  font-size: .82rem;
+  line-height: 1.5;
+}
+div[data-testid="stColumn"]:has(.mlc-fromtag-marker) .stButton > button:hover {
+  background: var(--mlc-main-soft);
+  border-style: solid;
+  border-color: var(--mlc-main);
+  color: var(--mlc-main);
+}
+.mlc-today-nolink {
+  min-height: 62px; display: flex; align-items: center;
+  font-size: .82rem; color: var(--mlc-ink-soft); padding: 0 6px;
+}
+
+/* =========================================================
+   Dashboard：目指している未来（Compassカードを横並び）
+   カード全体がクリックでき、押すと Compass 編集画面へ
+   ========================================================= */
+.mlc-summary-marker { height: 0; margin: 0; overflow: hidden; }
+div[data-testid="stColumn"]:has(.mlc-summary-marker) .stButton > button {
+  display: block;
+  text-align: left;
+  white-space: normal;
+  height: 100%;
+  min-height: 210px;
+  padding: 20px 22px;
+  border-radius: var(--mlc-radius);
+  border: 1px solid var(--mlc-line);
+  border-left: 4px solid var(--mlc-main);
+  background: var(--mlc-base);
+  color: var(--mlc-ink);
+  box-shadow: var(--mlc-shadow);
+  font-weight: 500;
+}
+div[data-testid="stColumn"]:has(.mlc-summary-marker.sub) .stButton > button    { border-left-color: var(--mlc-sub); }
+div[data-testid="stColumn"]:has(.mlc-summary-marker.accent) .stButton > button { border-left-color: var(--mlc-accent); }
+div[data-testid="stColumn"]:has(.mlc-summary-marker) .stButton > button:hover {
+  background: var(--mlc-surface);
+  color: var(--mlc-ink);
+  box-shadow: 0 4px 16px rgba(60, 63, 70, 0.08);
+}
+/* カード内の段落（タイトル / 説明 / 期間 / タグ / Route状態） */
+div[data-testid="stColumn"]:has(.mlc-summary-marker) .stButton > button p { margin: 0 0 8px 0; line-height: 1.6; }
+div[data-testid="stColumn"]:has(.mlc-summary-marker) .stButton > button p:nth-child(1) {
+  font-size: 1.08rem; font-weight: 700; color: var(--mlc-ink);
+}
+div[data-testid="stColumn"]:has(.mlc-summary-marker) .stButton > button p:nth-child(2) {
+  font-size: .88rem; color: var(--mlc-ink-soft); line-height: 1.8;
+}
+div[data-testid="stColumn"]:has(.mlc-summary-marker) .stButton > button p:nth-child(3) {
+  font-size: .82rem; color: var(--mlc-ink-soft);
+}
+div[data-testid="stColumn"]:has(.mlc-summary-marker) .stButton > button p:nth-child(4) {
+  font-size: .82rem; color: var(--mlc-main); font-weight: 700;
+}
+div[data-testid="stColumn"]:has(.mlc-summary-marker.sub) .stButton > button p:nth-child(4)    { color: var(--mlc-sub); }
+div[data-testid="stColumn"]:has(.mlc-summary-marker.accent) .stButton > button p:nth-child(4) { color: var(--mlc-accent); }
+div[data-testid="stColumn"]:has(.mlc-summary-marker) .stButton > button p:last-child {
+  font-size: .8rem; color: var(--mlc-ink-soft); margin-bottom: 0;
+  border-top: 1px dashed var(--mlc-line); padding-top: 10px;
+}
+
+/* 「新しいCompassを整理する」の控えめボタン（一覧末尾） */
+.mlc-add-note { font-size: .84rem; color: var(--mlc-ink-soft); margin: 4px 2px 12px 2px; }
+
+/* 削除確認 */
+.mlc-danger-note { font-size: .92rem; font-weight: 700; color: #a9503b; margin: 6px 2px 8px; }

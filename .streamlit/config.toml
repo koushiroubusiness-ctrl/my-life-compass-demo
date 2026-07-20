@@ -1,0 +1,15 @@
+# My Life Compass — Streamlit 設定
+# pages/ を置くと Streamlit が自動でマルチページ・ナビを出すため、
+# 独自の option_menu と二重化しないよう自動ナビを非表示にする。
+
+[client]
+showSidebarNavigation = false
+toolbarMode = "minimal"
+
+[theme]
+base = "light"
+primaryColor = "#5B7DB1"          # Main: 落ち着いたブルー
+backgroundColor = "#FFFFFF"        # Base: ホワイト
+secondaryBackgroundColor = "#F7F5EF"  # Surface: 薄いアイボリー
+textColor = "#3A3F45"
+font = "sans serif"

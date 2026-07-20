@@ -1,0 +1,24 @@
+{
+  "name": "my-life-compass",
+  "version": "1.0.0",
+  "description": "My Life Compass — 自分らしい人生を、一歩ずつ形に。人生の意思決定を支援する AI パートナー。価値観と目指したい未来を整理し（Compass）、道筋をつくり（Route）、今日の一歩へつなぐ（Journey）。本リポジトリは Streamlit 製の操作可能なフロントモックと、サービス紹介のランディングページ（lp/）で構成される。",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "playwright test"
+  },
+  "keywords": [
+    "my-life-compass",
+    "landing-page",
+    "streamlit",
+    "prototype"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.1.1"
+  }
+}

@@ -1,0 +1,12 @@
+# --- 本番バックエンド（既存） ---
+notion-client
+anthropic
+python-dotenv
+
+# --- UI/世界観確認用モック（Streamlit） ---
+streamlit
+streamlit-option-menu
+
+# --- 資料（PPTX / PDF）のテキスト抽出用 ---
+python-pptx
+pypdf
