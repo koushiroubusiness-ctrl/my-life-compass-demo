@@ -10,6 +10,7 @@ session_state.nav_override を manual_select で反映して実現する。
 開閉しても現在ページの選択状態は保たれ、メイン画面のレイアウトは崩れない。
 """
 import streamlit as st
+import streamlit.components.v1 as components
 from streamlit_option_menu import option_menu
 
 # (表示ラベル, Bootstrap Icon 名, 閉じた状態のアイコン絵文字)
@@ -117,6 +118,75 @@ def _render_collapsed():
             st.rerun()
 
 
+def _inject_mobile_nav():
+    """スマホ幅（≤768px）でサイドバーを開閉するハンバーガー/背景/JSを注入する。
+
+    st.markdown ではスクリプトが実行されないため components.html（iframe）から
+    親ドキュメント（window.parent.document）を操作する。開閉は body の
+    .mlc-sb-open クラスで制御し、CSS メディアクエリ側で見た目を切り替える。
+    PC 幅ではハンバーガー/背景は CSS で非表示になり、挙動は変わらない。
+    """
+    components.html(
+        """
+        <script>
+        (function () {
+          const doc = window.parent.document;
+          const body = doc.body;
+          const HAM_ID = "mlc-mobile-hamburger";
+          const BD_ID = "mlc-sb-backdrop";
+          const OPEN = "mlc-sb-open";
+
+          const close = () => body.classList.remove(OPEN);
+          const toggle = () => body.classList.toggle(OPEN);
+
+          // ハンバーガー / 背景を（無ければ）一度だけ作る
+          if (!doc.getElementById(HAM_ID)) {
+            const btn = doc.createElement("button");
+            btn.id = HAM_ID;
+            btn.className = "mlc-mobile-hamburger";
+            btn.setAttribute("aria-label", "メニューを開く");
+            btn.type = "button";
+            btn.textContent = "\\u2630";  // ☰
+            btn.addEventListener("click", function (e) {
+              e.stopPropagation();
+              toggle();
+            });
+            body.appendChild(btn);
+          }
+          if (!doc.getElementById(BD_ID)) {
+            const bd = doc.createElement("div");
+            bd.id = BD_ID;
+            bd.className = "mlc-sb-backdrop";
+            bd.addEventListener("click", close);
+            body.appendChild(bd);
+          }
+
+          // 閉じる系のクリック処理は親ドキュメントに一度だけ委譲登録する
+          if (!window.parent.__mlcMobileNavBound) {
+            window.parent.__mlcMobileNavBound = true;
+            doc.addEventListener("click", function (e) {
+              if (!body.classList.contains(OPEN)) return;
+              const ham = doc.getElementById(HAM_ID);
+              if (ham && ham.contains(e.target)) return;   // トグルは専用ハンドラ
+              const sb = doc.querySelector('section[data-testid="stSidebar"]');
+              if (sb && sb.contains(e.target)) {
+                // メニュー項目（リンク/ボタン）を押したら少し待って閉じる
+                if (e.target.closest('a, .nav-link, button, [role="link"]')) {
+                  setTimeout(close, 200);
+                }
+                return;   // サイドバー内のその他は閉じない
+              }
+              // サイドバー外をタップ → 閉じる
+              close();
+            }, true);
+          }
+        })();
+        </script>
+        """,
+        height=0,
+    )
+
+
 def sidebar_nav() -> str:
     """サイドバーを描画し、選択されたページ名を返す。
 
@@ -143,5 +213,8 @@ def sidebar_nav() -> str:
             _render_open(labels, icons, manual)
         else:
             _render_collapsed()
+
+    # スマホ幅でのサイドバー開閉（ハンバーガー/背景/JS）を注入
+    _inject_mobile_nav()
 
     return ss.current_page

@@ -732,3 +732,87 @@ div[data-testid="stColumn"]:has(.mlc-summary-marker) .stButton > button p:last-c
 
 /* 削除確認 */
 .mlc-danger-note { font-size: .92rem; font-weight: 700; color: #a9503b; margin: 6px 2px 8px; }
+
+/* =========================================================
+   モバイル（幅768px以下）
+   サイドバーを画面外に隠し、ハンバーガーで重ねて開く。
+   PC表示（769px以上）のデザイン・動作はこれまで通り変更しない。
+   ========================================================= */
+
+/* PC では独自ハンバーガー / 背景は使わない（存在しても隠す） */
+.mlc-mobile-hamburger,
+.mlc-sb-backdrop { display: none; }
+
+@media (max-width: 768px) {
+  /* 横スクロール防止 */
+  html, body, .stApp { overflow-x: hidden !important; max-width: 100vw; }
+
+  /* サイドバーをオーバーレイ化。初期は画面外へ隠す（閉じた状態）。
+     開閉トグル（.mlc-sb-collapsed 有無）に関わらず、モバイルでは最大240px幅。 */
+  section[data-testid="stSidebar"],
+  section[data-testid="stSidebar"]:has(.mlc-sb-collapsed) {
+    position: fixed !important;
+    top: 0; left: 0; bottom: 0;
+    height: 100vh !important;
+    width: 240px !important;
+    min-width: 240px !important;
+    max-width: 240px !important;
+    transform: translateX(-100%) !important;
+    transition: transform .25s ease;
+    z-index: 1000000;
+    box-shadow: 2px 0 18px rgba(60, 63, 70, 0.18);
+    margin-left: 0 !important;
+  }
+  /* 閉じているときはサイドバー内部の中身を細くしない（240pxで通常表示） */
+  section[data-testid="stSidebar"]:has(.mlc-sb-collapsed) [data-testid="stSidebarContent"] {
+    min-width: 240px !important;
+    width: 240px !important;
+  }
+  section[data-testid="stSidebar"]:has(.mlc-sb-collapsed) .block-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* 開いた状態（body に .mlc-sb-open が付く）だけ画面内へ */
+  body.mlc-sb-open section[data-testid="stSidebar"] {
+    transform: translateX(0) !important;
+  }
+
+  /* サイドバーが閉じている間はメインを画面幅いっぱいに */
+  [data-testid="stMain"],
+  [data-testid="stAppViewContainer"] > section:last-child {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  [data-testid="stMain"] .block-container {
+    max-width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* 左上のハンバーガーボタン（サイドバーが閉じていても常に押せる位置） */
+  .mlc-mobile-hamburger {
+    display: flex;
+    position: fixed;
+    top: 8px; left: 8px;
+    width: 44px; height: 44px;
+    align-items: center; justify-content: center;
+    border-radius: 12px;
+    border: 1px solid var(--mlc-line);
+    background: var(--mlc-base);
+    color: var(--mlc-main);
+    font-size: 1.4rem; line-height: 1;
+    box-shadow: 0 2px 8px rgba(60, 63, 70, 0.14);
+    cursor: pointer;
+    z-index: 1000001;      /* サイドバーより前面 */
+  }
+
+  /* サイドバー外をタップして閉じるための背景（開いている間だけ表示） */
+  body.mlc-sb-open .mlc-sb-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(60, 63, 70, 0.32);
+    z-index: 999999;       /* サイドバーの直下 */
+  }
+}
