@@ -30,6 +30,9 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 
+# 商品紹介動画の撮影成果物（素材）
+/playwright-videos/
+
 # Claude Codeの設定
 .claude/
 
